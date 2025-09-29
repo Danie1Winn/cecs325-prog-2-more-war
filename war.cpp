@@ -11,6 +11,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector> // New import needed for std::vector
+#include <stdexcept> // New import needed for std::runtime_error
 
 using namespace std; // Allows for shortcuts
 
@@ -20,7 +21,7 @@ struct Player {
     int win = 0;
     int lose = 0;
     int tie = 0;
-}
+};
 
 // Card Class (from card.h and card.cpp)
 class Card {
@@ -122,8 +123,17 @@ public:
         }
     }
 
+    // New isEmpty() method that returns if the deck is empty
+    bool isEmpty() {
+        return myDeck.empty();
+    }
+
     // Deals a single card from the top of the deck
     Card deal() {
+        // New if statement, checks if the deck is empty and raises an exception if so.
+        if (isEmpty()) {
+            throw std::runtime_error("Error - Deck is empty");
+        }
         //Card dealtCard = myDeck[topCard];
         // Changed to retrieve the card from the end of the vector.
         Card dealtCard = myDeck.back();
@@ -225,7 +235,7 @@ int main () {
         else {
             cout << "Tie game" << endl;
             playerOne.tie++;
-            playerTwo.tie++
+            playerTwo.tie++;
         }
         std::cout << std::endl;
     }
