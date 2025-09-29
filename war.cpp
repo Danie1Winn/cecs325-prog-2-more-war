@@ -10,12 +10,11 @@
 #include <string>
 #include <ctime>
 #include <cstdlib>
+#include <vector> // New import required for vectors
 
 using namespace std; // Allows for shortcuts
 
-// ===================================================================
 // Card Class (from card.h and card.cpp)
-// ===================================================================
 class Card {
 public:
     // Constructor to create a card with a specific rank and suit
@@ -94,22 +93,22 @@ private:
     }
 };
 
-// ===================================================================
 // Deck Class (from deck.h and deck.cpp)
-// ===================================================================
 class Deck{
 public:
     // Constructor that creates a standard 52-card deck
     Deck() {
         char suits [] = {'C', 'S', 'D', 'H'}; // Clubs, spades, diamonds, hearts
         char ranks[] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
-        topCard = 0;
-        int cardIndex = 0;
+        
+        //topCard = 0;
+        //int cardIndex = 0;
 
         for (int s=0; s<4; s++) {
             for (int r=0; r < 13; r++) {
-                myDeck[cardIndex] = Card(ranks[r], suits[s]);
-                cardIndex++;
+                //myDeck[cardIndex] = Card(ranks[r], suits[s]);
+                //cardIndex++;
+                myDeck.push_back(Card(ranks[r], suits[s]));
             }
         }
     }
@@ -151,10 +150,7 @@ private:
     int topCard;
 };
 
-
-// ===================================================================
 // Main Function (from war.cpp)
-// ===================================================================
 int main () {
     srand(time(0));
 
