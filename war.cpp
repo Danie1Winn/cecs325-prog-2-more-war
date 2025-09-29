@@ -1,7 +1,7 @@
 // Name: Daniel Winn
 // Class (CECS 325-02)
 // Project Name (Prog 2 - More WAR)
-// Due Date (09/18/2025)
+// Due Date (09/30/2025)
 //
 // I certify that this program is my own original work. I did not copy any part of this program from
 // any other source. I further certify that I typed each and every line of code in this program.
@@ -10,9 +10,17 @@
 #include <string>
 #include <ctime>
 #include <cstdlib>
-#include <vector> // New import required for vectors
+#include <vector> // New import needed for std::vector
 
 using namespace std; // Allows for shortcuts
+
+// Player struct used to store player name and stats
+struct Player {
+    string name;
+    int win = 0;
+    int lose = 0;
+    int tie = 0;
+}
 
 // Card Class (from card.h and card.cpp)
 class Card {
@@ -23,10 +31,11 @@ public:
         suit = s;
     }
 
-    // Default constructor needed for array creation
-    Card() {
-        // Initializes a card with no assigned rank or suit. Left empty; Deck will create the actual cards.
-    }
+    /* Removed the default Card() constructor, as it is not needed for the vector implementation
+     *Card() {
+     *   // Initializes a card with no assigned rank or suit. Left empty; Deck will create the actual cards.
+     *}
+     */
 
     // Displays the card to the console
     void display() {
@@ -100,7 +109,6 @@ public:
     Deck() {
         char suits [] = {'C', 'S', 'D', 'H'}; // Clubs, spades, diamonds, hearts
         char ranks[] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
-        
         //topCard = 0;
         //int cardIndex = 0;
 
@@ -108,6 +116,7 @@ public:
             for (int r=0; r < 13; r++) {
                 //myDeck[cardIndex] = Card(ranks[r], suits[s]);
                 //cardIndex++;
+                // Changed constructor to push new Card objects to the end of the vector.
                 myDeck.push_back(Card(ranks[r], suits[s]));
             }
         }
@@ -115,14 +124,19 @@ public:
 
     // Deals a single card from the top of the deck
     Card deal() {
-        Card dealtCard = myDeck[topCard];
-        topCard++;
+        //Card dealtCard = myDeck[topCard];
+        // Changed to retrieve the card from the end of the vector.
+        Card dealtCard = myDeck.back();
+        //topCard++;
+        // Removes the final card in the vector.
+        myDeck.pop_back();
         return dealtCard;
     }
 
     // Displays all 52 cards in the deck
     void display() {
-        for (int i=0; i<52; i++) {
+        // Now usees the vector's size to display the deck
+        for (int i=0; myDeck.size(); i++) {
             myDeck[i].display();
             cout << ",";
 
@@ -134,10 +148,10 @@ public:
 
     // Shuffles the cards in the deck
     void shuffle() {
-        topCard = 0;
-
-        for (int i=51; i>0; i--) {
-            int j = rand() % (i+1);
+        //topCard = 0;
+        // Now uses the vector's size to shuffle
+        for (int i = myDeck.size() - 1; i > 0; i--) {
+            int j = rand() % (i + 1);
 
             Card temp = myDeck[i];
             myDeck[i] = myDeck[j];
@@ -146,23 +160,28 @@ public:
     }
 
 private:
-    Card myDeck[52];
-    int topCard;
+    //Card myDeck[52];
+    //int topCard;
+    // Changed the deck to be a vector of Card objects rather than an array.
+    vector<Card> myDeck;
 };
 
 // Main Function (from war.cpp)
 int main () {
     srand(time(0));
 
-    string playerOne, playerTwo;
-    int playerOneWins = 0;
-    int playerTwoWins = 0;
-    int ties = 0;
+    //string playerOne, playerTwo;
+    //int playerOneWins = 0;
+    //int playerTwoWins = 0;
+    //int ties = 0;
+    // Changed individually stored player string and int variables to be stored within Player structs
+    Player playerOne;
+    Player playerTwo;
 
     cout << "Enter the name of the first player: ";
-    cin >> playerOne;
+    cin >> playerOne.name;
     cout << "Enter the name of the second player: ";
-    cin >> playerTwo;
+    cin >> playerTwo.name;
     cout << endl;
 
     Deck gameDeck;
@@ -183,27 +202,30 @@ int main () {
         Card p1Card = gameDeck.deal();
         Card p2Card = gameDeck.deal();
 
-        cout << "\t" << playerOne << " - ";
+        cout << "\t" << playerOne.name << " - ";
         p1Card.display();
         cout << endl;
 
-        cout << "\t" << playerTwo << " - ";
+        cout << "\t" << playerTwo.name << " - ";
         p2Card.display();
         cout << endl;
 
         int result = p1Card.compare(p2Card);
 
         if (result==1) {
-            cout << playerOne << " - Winner" << endl;
-            playerOneWins++;
+            cout << playerOne.name << " - Winner" << endl;
+            playerOne.win++;
+            playerTwo.lose++;
         }
         else if (result==-1) {
-            cout << playerTwo << " - Winner" << endl;
-            playerTwoWins++;
+            cout << playerTwo.name << " - Winner" << endl;
+            playerTwo.win++;
+            playerOne.lose++;
         }
         else {
             cout << "Tie game" << endl;
-            ties++;
+            playerOne.tie++;
+            playerTwo.tie++
         }
         std::cout << std::endl;
     }
@@ -211,10 +233,10 @@ int main () {
 
     cout << "Final Scores" << endl;
     cout << "______________________________\n" << endl;
-    cout << "\t" << playerOne << "\t vs. \t" << playerTwo << endl;
-    cout << "Wins\t" << playerOneWins <<  "\t\t" << playerTwoWins << endl;
-    cout << "Losses\t" << playerTwoWins << "\t\t" << playerOneWins << endl;
-    cout << "Ties\t" << ties << "\t\t" << ties << endl;
+    cout << "\t" << playerOne.name << "\t vs. \t" << playerTwo.name << endl;
+    cout << "Wins\t" << playerOne.win <<  "\t\t" << playerTwo.win << endl;
+    cout << "Losses\t" << playerOne.lose << "\t\t" << playerTwo.lose << endl;
+    cout << "Ties\t" << playerOne.tie << "\t\t" << playerTwo.tie << endl;
 
     return 0;
 }
