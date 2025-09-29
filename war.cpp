@@ -71,6 +71,8 @@ private:
     // Gets the numerical value of the card's rank for comparison
     int getValue() {
         switch (rank) {
+            case 'A':
+            return 14;
             case 'K':
             return 13;
             case 'Q':
@@ -95,8 +97,6 @@ private:
             return 3;
             case '2':
             return 2;
-            case 'A':
-            return 1;
             default:
             return 0;
         }
@@ -187,11 +187,18 @@ int main () {
     // Changed individually stored player string and int variables to be stored within Player structs
     Player playerOne;
     Player playerTwo;
+    // int to store the number of games the user chooses to play
+    int gamesToPlay;
 
     cout << "Enter the name of the first player: ";
     cin >> playerOne.name;
     cout << "Enter the name of the second player: ";
     cin >> playerTwo.name;
+    cout << endl;
+
+    // Prompts the user to retrieve the number of games they want to play.
+    cout << "How many games will they play?: ";
+    cin >> gamesToPlay;
     cout << endl;
 
     Deck gameDeck;
@@ -205,41 +212,47 @@ int main () {
     gameDeck.display();
     cout << endl;
 
-    for (int i=0; i<26; i++) {
-        cout << "Game " << (i+1) << endl;
-        cout << "____________________\n" << endl;
+    try {
+        // Loop runs for the number of games the user entered
+        for (int i=0; i < gamesToPlay; i++) {
+            cout << "Game " << (i+1) << endl;
+            cout << "____________________\n" << endl;
 
-        Card p1Card = gameDeck.deal();
-        Card p2Card = gameDeck.deal();
+            Card p1Card = gameDeck.deal();
+            Card p2Card = gameDeck.deal();
 
-        cout << "\t" << playerOne.name << " - ";
-        p1Card.display();
-        cout << endl;
+            cout << "\t" << playerOne.name << " - ";
+            p1Card.display();
+            cout << endl;
 
-        cout << "\t" << playerTwo.name << " - ";
-        p2Card.display();
-        cout << endl;
+            cout << "\t" << playerTwo.name << " - ";
+            p2Card.display();
+            cout << endl;
 
-        int result = p1Card.compare(p2Card);
+            int result = p1Card.compare(p2Card);
 
-        if (result==1) {
-            cout << playerOne.name << " - Winner" << endl;
-            playerOne.win++;
-            playerTwo.lose++;
+            if (result==1) {
+                cout << playerOne.name << " - Winner" << endl;
+                playerOne.win++;
+                playerTwo.lose++;
+            }
+            else if (result==-1) {
+                cout << playerTwo.name << " - Winner" << endl;
+                playerTwo.win++;
+                playerOne.lose++;
+            }
+            else {
+                cout << "Tie game" << endl;
+                playerOne.tie++;
+                playerTwo.tie++;
+            }
+            cout << endl;
         }
-        else if (result==-1) {
-            cout << playerTwo.name << " - Winner" << endl;
-            playerTwo.win++;
-            playerOne.lose++;
-        }
-        else {
-            cout << "Tie game" << endl;
-            playerOne.tie++;
-            playerTwo.tie++;
-        }
-        std::cout << std::endl;
     }
-
+    // Catch block if the above try throws a runetime_error
+    catch (const runtime_error& e) {
+        cout << e.what() << endl;
+    }
 
     cout << "Final Scores" << endl;
     cout << "______________________________\n" << endl;
